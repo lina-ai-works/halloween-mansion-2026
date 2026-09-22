@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LOBBY</title>
+<link rel="preload" as="image" href="lobby.jpg">
+<style>
+/* ============================================================
+   合同展のロビー（アーチの中にポスターが並ぶ）
+   ============================================================ */
+:root{
+  --night:#0E0B12;
+  --cream:#F4ECDD;
+  --mute:#C3B39C;
+  --gold:rgba(214,176,112,.55);
+  --ember:rgba(255,170,80,.5);
+  --ease:cubic-bezier(.65,.05,.36,1);
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","HGS明朝E",Georgia,serif;
+  --gothic:"Hiragino Sans","Yu Gothic","YuGothic","Helvetica Neue",Arial,sans-serif;
+
+  /* 絵の大きさ（入口と同じ決め方） */
+  --vh:1vh;
+  --scene-w:min(max(100vw, calc(var(--vh) * 60)), calc(var(--vh) * 80));
+  --scene-h:calc(var(--scene-w) * 1.2496);
+  --scene-top:calc(var(--vh) * 50 - var(--scene-h) / 2);
+  /* ポスター：縦3:4。アーチの中の舞台に立つ高さ */
+  --poster-h:min(calc(var(--vh) * 30), calc(var(--scene-h) * .36));
+  --poster-w:calc(var(--poster-h) * .75);
+  --stage:calc(var(--scene-top) + var(--scene-h) * .635);   /* ポスターの足もと */
+}
+@supports (height:1svh){ :root{ --vh:1svh; } }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--night)}
+body{font-family:var(--gothic);color:var(--cream);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cream);outline-offset:4px}
+
+/* ---------- 背景 ---------- */
+.haze{position:fixed;inset:-6%;z-index:0;
+  background:url(lobby.jpg) center/cover no-repeat;
+  filter:blur(28px) brightness(.45) saturate(1.1)}
+.scene{
+  position:fixed;left:50%;top:50%;z-index:1;
+  width:var(--scene-w);aspect-ratio:1122/1402;translate:-50% -50%;
+  -webkit-mask-image:
+    linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%),
+    linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%);
+  -webkit-mask-composite:source-in;
+          mask-image:
+    linear-gradient(180deg,transparent 0,#000 6%,#000 94%,transparent 100%),
+    linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%);
+          mask-composite:intersect;
+}
+.scene img{display:block;width:100%;height:100%;
+  -webkit-user-select:none;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
+.glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(closest-side,var(--ember),transparent);
+  opacity:.4;animation:flicker 3.6s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:.32}20%{opacity:.6}35%{opacity:.4}55%{opacity:.68}72%{opacity:.38}88%{opacity:.55}}
+
+.shade{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(10,8,12,.62) 0%,transparent 16%),
+    linear-gradient(0deg,rgba(10,8,12,.8) 0%,rgba(10,8,12,.25) 18%,transparent 30%)}
+
+/* ---------- 上の文字 ---------- */
+.head{position:fixed;left:0;right:0;z-index:4;
+  top:calc(18px + env(safe-area-inset-top));
+  text-align:center;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.head .e{font-family:var(--mincho);font-size:10px;letter-spacing:.44em;text-indent:.44em;color:var(--mute)}
+.head .t{font-family:var(--mincho);font-size:clamp(14px,3.8vw,17px);letter-spacing:.3em;text-indent:.3em;margin-top:4px}
+#toGate{position:fixed;left:14px;top:calc(14px + env(safe-area-inset-top));z-index:5;
+  height:36px;padding:0 14px;display:flex;align-items:center;border-radius:999px;
+  background:rgba(14,11,18,.5);border:1px solid rgba(244,236,221,.2);backdrop-filter:blur(3px);
+  font-family:var(--mincho);font-size:11px;letter-spacing:.16em;text-decoration:none;color:var(--mute);
+  transition:color .25s,border-color .25s}
+@media (max-width:420px){.head .e{letter-spacing:.22em;text-indent:.22em;font-size:9px}.head{padding:0 86px}}
+#toGate:hover{color:var(--cream);border-color:rgba(244,236,221,.45)}
+
+/* ---------- アーチの中のポスター ---------- */
+#shelf{
+  position:fixed;left:50%;translate:-50% 0;z-index:3;
+  width:min(var(--scene-w), 100vw + 40px);
+  top:calc(var(--stage) - var(--poster-h) - 18px);
+  height:calc(var(--poster-h) + 36px);
+  display:flex;align-items:flex-end;gap:calc(var(--poster-w) * .12);
+  padding:18px calc((min(var(--scene-w), 100vw + 40px) - var(--poster-w)) / 2);
+  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);
+}
+#shelf::-webkit-scrollbar{display:none}
+.card{
+  position:relative;flex:0 0 var(--poster-w);height:var(--poster-h);
+  scroll-snap-align:center;transform-origin:50% 100%;cursor:pointer;
+  box-shadow:0 14px 30px rgba(0,0,0,.6),0 0 0 1px rgba(214,176,112,.28);
+  background:#1A1419;
+  transition:box-shadow .3s;
+  will-change:transform,filter;
+}
+.card img{display:block;width:100%;height:100%;object-fit:cover;
+  -webkit-user-select:none;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
+.card::after{content:"";position:absolute;inset:0}   /* 画像を直接つかめないように */
+.card.center{box-shadow:0 18px 40px rgba(0,0,0,.65),0 0 0 1px var(--gold),0 0 38px rgba(255,180,90,.18)}
+
+/* ポスターがまだ無いとき */
+.blank{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;padding:14px;text-align:center;
+  background:
+    radial-gradient(80% 60% at 50% 35%,rgba(255,180,90,.1),transparent 70%),
+    linear-gradient(180deg,#241C22,#140F14)}
+.blank::before{content:"";position:absolute;inset:7px;border:1px solid rgba(214,176,112,.3)}
+.blank .n{font-family:var(--mincho);font-size:clamp(13px,3.6vw,16px);letter-spacing:.14em;line-height:1.5}
+.blank .s{font-family:var(--mincho);font-size:10.5px;letter-spacing:.1em;color:var(--mute);line-height:1.7}
+
+/* GUEST ROOM の扉（画像が無いときの形） */
+.card.guest{border-radius:999px 999px 0 0;overflow:hidden}
+.card.guest .blank{background:
+    radial-gradient(70% 45% at 50% 62%,rgba(255,190,110,.22),transparent 70%),
+    linear-gradient(180deg,#2A2027,#110C10)}
+.card.guest .blank::before{border-radius:999px 999px 0 0}
+.card.guest .blank .e{font-family:var(--mincho);font-size:9.5px;letter-spacing:.34em;text-indent:.34em;color:var(--mute)}
+
+/* 真ん中の作品の名前 */
+#caption{position:fixed;left:0;right:0;z-index:4;
+  top:calc(var(--stage) + 16px);text-align:center;padding:0 20px;
+  text-shadow:0 2px 12px rgba(0,0,0,.85);transition:opacity .25s}
+#caption.fade{opacity:0}
+#caption .n{font-family:var(--mincho);font-size:clamp(15px,4vw,18px);letter-spacing:.16em;text-indent:.16em}
+#caption .s{font-family:var(--mincho);font-size:11.5px;letter-spacing:.14em;color:var(--mute);margin-top:4px}
+
+/* ---------- 下のナビ ---------- */
+#nav{position:fixed;left:0;right:0;z-index:4;
+  bottom:calc(16px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;justify-content:center;gap:clamp(14px,5vw,30px)}
+.navbtn{width:44px;height:44px;border-radius:50%;font-size:16px;color:var(--cream);
+  border:1px solid rgba(244,236,221,.3);background:rgba(14,11,18,.4);backdrop-filter:blur(3px);
+  transition:background .25s,opacity .25s}
+.navbtn:hover{background:rgba(255,170,80,.16)}
+.navbtn[disabled]{opacity:.22;pointer-events:none}
+#count{font-family:var(--mincho);font-size:12px;letter-spacing:.2em;color:var(--mute);min-width:60px;text-align:center}
+#go{font-family:var(--mincho);font-size:12.5px;letter-spacing:.3em;text-indent:.3em;
+  padding:12px 22px;border:1px solid rgba(244,236,221,.42);background:rgba(14,11,18,.45);
+  backdrop-filter:blur(3px);transition:background .25s}
+#go:hover{background:rgba(255,170,80,.16)}
+
+/* ---------- 案内・お知らせ ---------- */
+#hint{position:fixed;left:50%;top:40%;translate:-50% -50%;z-index:6;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:clamp(20px,5vw,28px) clamp(24px,7vw,40px);
+  background:rgba(18,13,22,.8);backdrop-filter:blur(4px);text-align:center;pointer-events:none;
+  opacity:0;visibility:hidden;transition:opacity .9s var(--ease),visibility .9s}
+#hint.on{opacity:1;visibility:visible}
+#hint .a{font-family:var(--mincho);font-size:clamp(12px,3.3vw,14px);letter-spacing:.14em;white-space:nowrap}
+#hint .b{font-family:var(--mincho);font-size:clamp(10.5px,2.9vw,12px);letter-spacing:.12em;color:#B3A9BB;white-space:nowrap}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));translate:-50% 0;z-index:7;
+  background:rgba(20,15,22,.9);color:var(--cream);font-size:12.5px;letter-spacing:.1em;
+  padding:11px 20px;opacity:0;pointer-events:none;transition:opacity .3s}
+#toast.on{opacity:1}
+
+/* ---------- 暗転 ---------- */
+#dark{position:fixed;inset:0;z-index:20;background:var(--night);pointer-events:none;
+  opacity:1;transition:opacity .9s ease}
+#dark.off{opacity:0}
+body.going #dark{opacity:1;transition:opacity .7s ease .35s}
+body.going .card.center{transform:scale(1.18) !important;filter:none !important;
+  transition:transform .9s cubic-bezier(.55,0,.8,.3)}
+
+@media (prefers-reduced-motion:reduce){
+  .glow{animation:none}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="haze" aria-hidden="true"></div>
+
+<div class="scene" aria-hidden="true">
+  <img src="lobby.jpg" alt="" draggable="false">
+  <!-- シャンデリアとランタンの灯り -->
+  <span class="glow" style="left:33%;top:0%;width:35%;height:20%;animation-delay:-.6s"></span>
+  <span class="glow" style="left:2%;top:18.5%;width:14%;height:11%;animation-delay:-2.1s"></span>
+  <span class="glow" style="left:18.5%;top:14.2%;width:11%;height:9%;animation-delay:-1.3s"></span>
+  <span class="glow" style="left:18.3%;top:31.2%;width:11%;height:9%;animation-delay:-2.8s"></span>
+  <span class="glow" style="left:85%;top:13.7%;width:14%;height:11%;animation-delay:-.2s"></span>
+  <span class="glow" style="left:72.8%;top:24%;width:11%;height:9%;animation-delay:-1.7s"></span>
+  <span class="glow" style="left:16%;top:46%;width:11%;height:8%;animation-delay:-3.4s"></span>
+  <span class="glow" style="left:75.5%;top:49.5%;width:11%;height:8%;animation-delay:-2.5s"></span>
+  <span class="glow" style="left:-2%;top:51%;width:13%;height:10%;animation-delay:-3.1s"></span>
+  <span class="glow" style="left:6%;top:57%;width:11%;height:8%;animation-delay:-1.5s"></span>
+  <span class="glow" style="left:8%;top:62.7%;width:15%;height:9%;animation-delay:-.9s"></span>
+  <span class="glow" style="left:78.5%;top:62.5%;width:16%;height:10%;animation-delay:-2.4s"></span>
+  <span class="glow" style="left:93%;top:67%;width:13%;height:9%;animation-delay:-3.6s"></span>
+  <span class="glow" style="left:2%;top:86%;width:16%;height:12%;animation-delay:-1.1s"></span>
+  <span class="glow" style="left:86%;top:83%;width:16%;height:12%;animation-delay:-2.9s"></span>
+</div>
+
+<div class="shade" aria-hidden="true"></div>
+
+<header class="head">
+  <div class="e" id="eyebrow"></div>
+  <div class="t">LOBBY</div>
+</header>
+<a id="toGate" href="index.html">入口へ</a>
+
+<div id="shelf" role="listbox" aria-label="展示の一覧"></div>
+<div id="caption"><div class="n"></div><div class="s"></div></div>
+
+<nav id="nav">
+  <button class="navbtn" id="prev" aria-label="ひとつ前">‹</button>
+  <button id="go">この展示へ</button>
+  <button class="navbtn" id="next" aria-label="ひとつ次">›</button>
+</nav>
+
+<div id="hint"><div class="a"></div><div class="b"></div></div>
+<div id="toast"></div>
+<div id="dark"></div>
+
+<script>
+/* ============================================================
+   ★ ここだけ書き換えてください ★
+   ============================================================ */
+
+const EVENT = {
+  eyebrow:  "HALLOWEEN EXHIBITION",
+  entrance: "index.html",   // 入口のファイル名
+  shuffle:  false           // true にすると、来るたびに並び順が変わります
+};
+
+/* 参加する人の展示（上から順に並びます）
+   ・poster はポスター画像のファイル名（縦3:4、1MB以下）
+   ・url はその人のハロウィン展示のURL。空だと「準備中」になります
+   ・参加しない人の行は、行ごと消してください */
+const EXHIBITS = [
+  { name:"りな",      title:"展示タイトル", poster:"poster01.png", url:"" },
+  { name:"参加者 02", title:"展示タイトル", poster:"poster02.jpg", url:"" },
+  { name:"参加者 03", title:"展示タイトル", poster:"poster03.jpg", url:"" },
+  { name:"参加者 04", title:"展示タイトル", poster:"poster04.jpg", url:"" },
+  { name:"参加者 05", title:"展示タイトル", poster:"poster05.jpg", url:"" },
+  { name:"参加者 06", title:"展示タイトル", poster:"poster06.jpg", url:"" },
+  { name:"参加者 07", title:"展示タイトル", poster:"poster07.jpg", url:"" },
+  { name:"参加者 08", title:"展示タイトル", poster:"poster08.jpg", url:"" },
+  { name:"参加者 09", title:"展示タイトル", poster:"poster09.jpg", url:"" },
+  { name:"参加者 10", title:"展示タイトル", poster:"poster10.jpg", url:"" }
+];
+
+/* GUEST ROOM の扉（いちばん最後に並びます） */
+const GUEST = {
+  show:   true,
+  name:   "GUEST ROOM",
+  title:  "作品1点で参加したみなさんの部屋",
+  poster: "guest.jpg",   // 無ければ、扉の形のカードが出ます
+  url:    "guest/index.html"   // guest フォルダに置いた GUEST ROOM
+};
+
+/* ============================================================
+   ここから下は触らなくて大丈夫です
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const shelf = $('#shelf');
+$('#eyebrow').textContent = EVENT.eyebrow;
+$('#toGate').href = EVENT.entrance || 'index.html';
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function store(k, v){
+  try{ if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); }
+  catch(e){ return null; }
+}
+
+/* 並べるものを用意する */
+let list = EXHIBITS.filter(x => x && x.name).map(x => Object.assign({ kind:'room' }, x));
+if (EVENT.shuffle){
+  const saved = store('lobby-order');
+  if (saved && saved.split(',').length === list.length){
+    const order = saved.split(',').map(Number);
+    list = order.map(i => list[i]).filter(Boolean);
+  } else {
+    const idx = list.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]];
+    }
+    store('lobby-order', idx.join(','));
+    list = idx.map(i => list[i]);
+  }
+}
+if (GUEST.show) list.push(Object.assign({ kind:'guest' }, GUEST));
+
+/* カードを作る */
+const cards = list.map((x, i) => {
+  const c = document.createElement('div');
+  c.className = 'card' + (x.kind === 'guest' ? ' guest' : '');
+  c.setAttribute('role', 'option');
+  c.tabIndex = -1;
+  const blank =
+    '<div class="blank">' +
+      (x.kind === 'guest' ? '<div class="e">GUEST ROOM</div>' : '') +
+      '<div class="n">' + esc(x.kind === 'guest' ? 'ゲストの部屋' : x.name) + '</div>' +
+      (x.kind === 'guest' ? '' : '<div class="s">' + esc(x.title || '') + '</div>') +
+    '</div>';
+  if (x.poster){
+    const img = new Image();
+    img.alt = x.name + ' ' + (x.title || '');
+    img.draggable = false;
+    img.onerror = () => { c.innerHTML = blank; };
+    img.src = x.poster;
+    c.appendChild(img);
+  } else {
+    c.innerHTML = blank;
+  }
+  c.addEventListener('click', () => {
+    if (i === current) open();
+    else center(i, true);
+  });
+  shelf.appendChild(c);
+  return c;
+});
+
+/* いま真ん中にあるもの */
+let current = -1;
+let aim = 0, aimAt = 0;   /* ボタンを続けて押したときも、ひとつずつ進むように */
+function stepWidth(){
+  return cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : 1;
+}
+function center(i, smooth){
+  i = Math.max(0, Math.min(cards.length - 1, i));
+  aim = i; aimAt = Date.now();
+  shelf.scrollTo({ left: i * stepWidth(), behavior: smooth ? 'smooth' : 'auto' });
+}
+
+/* 真ん中から離れるほど、小さく暗くする */
+let ticking = false;
+function paint(){
+  ticking = false;
+  const step = stepWidth();
+  const pos = shelf.scrollLeft / step;
+  cards.forEach((c, i) => {
+    const d = Math.min(Math.abs(i - pos), 1.6) / 1.6;
+    c.style.transform = 'scale(' + (1 - d * .24).toFixed(3) + ')';
+    c.style.filter = 'brightness(' + (1 - d * .55).toFixed(3) + ')';
+    c.style.zIndex = String(100 - Math.round(Math.abs(i - pos) * 10));
+  });
+  const near = Math.round(pos);
+  if (near !== current) setCurrent(near);
+}
+shelf.addEventListener('scroll', () => {
+  if (!ticking){ ticking = true; requestAnimationFrame(paint); }
+}, { passive:true });
+window.addEventListener('resize', () => { center(current, false); paint(); });
+
+const cap = $('#caption');
+function setCurrent(i){
+  current = Math.max(0, Math.min(cards.length - 1, i));
+  cards.forEach((c, n) => {
+    c.classList.toggle('center', n === current);
+    c.setAttribute('aria-selected', n === current ? 'true' : 'false');
+  });
+  const x = list[current];
+  cap.classList.add('fade');
+  setTimeout(() => {
+    cap.querySelector('.n').textContent = x.name;
+    cap.querySelector('.s').textContent = x.title || '';
+    cap.classList.remove('fade');
+  }, 120);
+  $('#prev').disabled = current === 0;
+  $('#next').disabled = current === cards.length - 1;
+  $('#go').textContent = x.kind === 'guest' ? 'ゲストの部屋へ' : 'この展示へ';
+  store('lobby-at', String(current));
+}
+
+/* 展示室へ入る */
+let going = false;
+function open(){
+  const x = list[current];
+  if (!x || going) return;
+  if (!x.url){ toast('この展示は、まもなく公開です'); return; }
+  going = true;
+  document.body.classList.add('going');
+  setTimeout(() => { location.href = x.url; }, 1000);
+}
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+const base = () => (Date.now() - aimAt < 700 ? aim : current);
+$('#prev').addEventListener('click', () => center(base() - 1, true));
+$('#next').addEventListener('click', () => center(base() + 1, true));
+$('#go').addEventListener('click', open);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight'){ e.preventDefault(); center(base() + 1, true); }
+  if (e.key === 'ArrowLeft'){ e.preventDefault(); center(base() - 1, true); }
+  if (e.key === 'Enter' && document.activeElement === document.body) open();
+});
+
+/* 到着：展示室から戻ってきたときは、さっき見ていた展示のところから */
+function arrive(){
+  const back = parseInt(store('lobby-at'), 10);
+  const start = isNaN(back) ? 0 : back;
+  requestAnimationFrame(() => {
+    center(start, false);
+    paint();
+    if (current !== start) setCurrent(start);
+    setTimeout(() => $('#dark').classList.add('off'), 60);
+  });
+  if (!store('lobby-hinted')){
+    store('lobby-hinted', '1');
+    const touch = window.matchMedia('(hover: none)').matches;
+    $('#hint .a').textContent = touch ? '← 横にスワイプして展示を選んでください →'
+                                      : '← 横にスクロールして展示を選んでください →';
+    $('#hint .b').textContent = touch ? 'ポスターをタップすると、その展示室へ入れます'
+                                      : 'ポスターをクリックすると、その展示室へ入れます';
+    setTimeout(() => $('#hint').classList.add('on'), 700);
+    setTimeout(() => $('#hint').classList.remove('on'), 4700);
+  }
+}
+arrive();
+
+/* ブラウザの「戻る」で帰ってきたとき、暗いままにならないようにする */
+window.addEventListener('pageshow', e => {
+  if (e.persisted){
+    going = false;
+    document.body.classList.remove('going');
+    $('#dark').classList.add('off');
+    paint();
+  }
+});
+
+/* 長押し・右クリックでの保存を抑止 */
+document.addEventListener('contextmenu', e => {
+  if (e.target.closest('.card, .scene, .haze')) e.preventDefault();
+});
+</script>
+</body>
+</html>
