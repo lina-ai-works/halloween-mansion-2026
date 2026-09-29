@@ -335,10 +335,6 @@ img{display:block}
 /* ---------- GUEST ROOM だけの形 ---------- */
 .tag.guest-name{margin-top:14px}
 .tag.guest-name b{margin-bottom:0;font-size:12.5px;letter-spacing:.14em}
-.lb-link{display:inline-block;margin-top:14px;text-decoration:none;
-  font-size:11.5px;letter-spacing:.16em;color:#EDE4D3;
-  border:1px solid rgba(237,228,211,.34);padding:9px 18px;transition:background .25s}
-.lb-link:hover{background:rgba(237,228,211,.1)}
 
 /* 参加者一覧 */
 .card.guests{width:min(640px,90vw);max-width:none;text-align:center}
@@ -392,7 +388,7 @@ img{display:block}
 <div id="lightbox">
   <button id="lbclose" aria-label="閉じる">✕</button>
   <img id="lbimg" alt="">
-  <div class="lb-text"><h2 id="lbtitle"></h2><a class="lb-link" id="lblink" href="#" target="_blank" rel="noopener" hidden></a></div>
+  <div class="lb-text"><h2 id="lbtitle"></h2><p id="lbcap"></p></div>
 </div>
 
 <div id="fade"></div>
@@ -413,20 +409,21 @@ const CONFIG = {
 };
 
 /* 参加するゲスト（10名まで・上から順に並びます）
+   ・title は作品タイトル（拡大したときに名前の下に出ます。空でもOK）
    ・file は作品のファイル名、icon はアイコン画像（無ければ名前の頭文字が出ます）
    ・link はリンクを1つだけ。URLが空ならボタンは出ません
    ・参加しない人の行は、行ごと消してください */
 const GUESTS = [
-  { name:"桜華", file:"art01.png", icon:"icon01.png", link:{ label:"Instagram", url:"https://www.instagram.com/usakuma.ruruu" } },
-  { name:"ゲスト 02", file:"art02.png", icon:"icon02.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 03", file:"art03.png", icon:"icon03.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 04", file:"art04.png", icon:"icon04.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 05", file:"art05.png", icon:"icon05.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 06", file:"art06.png", icon:"icon06.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 07", file:"art07.png", icon:"icon07.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 08", file:"art08.png", icon:"icon08.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 09", file:"art09.png", icon:"icon09.png", link:{ label:"Instagram", url:"" } },
-  { name:"ゲスト 10", file:"art10.png", icon:"icon10.png", link:{ label:"Instagram", url:"" } }
+  { name:"桜華", title:"After Dark", file:"art01.png", icon:"icon01.png", link:{ label:"Instagram", url:"https://www.instagram.com/usakuma.ruruu" } },
+  { name:"mike（ミケ）", title:"月を拾った夜", file:"art02.jpg", icon:"icon02.jpeg", link:{ label:"Instagram", url:"https://www.instagram.com/roomnumber2222ai/" } },
+  { name:"ゲスト 03", title:"作品タイトル", file:"art03.png", icon:"icon03.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 04", title:"作品タイトル", file:"art04.png", icon:"icon04.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 05", title:"作品タイトル", file:"art05.png", icon:"icon05.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 06", title:"作品タイトル", file:"art06.png", icon:"icon06.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 07", title:"作品タイトル", file:"art07.png", icon:"icon07.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 08", title:"作品タイトル", file:"art08.png", icon:"icon08.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 09", title:"作品タイトル", file:"art09.png", icon:"icon09.png", link:{ label:"Instagram", url:"" } },
+  { name:"ゲスト 10", title:"作品タイトル", file:"art10.png", icon:"icon10.png", link:{ label:"Instagram", url:"" } }
 ];
 
 /* ロビーのURL（この部屋を lobby.html の隣の guest フォルダに置くなら、このままでOK） */
@@ -719,14 +716,7 @@ function openLightbox(g){
   m.src = g.file;
   old.replaceWith(m);
   $('#lbtitle').textContent = g.name || '';
-  const a = $('#lblink');
-  if (g.link && g.link.url){
-    a.href = g.link.url;
-    a.textContent = g.link.label || 'LINK';
-    a.hidden = false;
-  } else {
-    a.hidden = true;
-  }
+  $('#lbcap').textContent = g.title || '';
   lb.classList.add('on');
 }
 function closeLightbox(){
