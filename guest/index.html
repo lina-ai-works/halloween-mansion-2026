@@ -178,9 +178,16 @@ img{display:block}
 }
 
 /* プロフィールの部屋 */
+/* プロフィールの部屋は、カードを画面の真ん中に置きます
+   （左右の飾りはカードの後ろへ回して、文字が隠れないようにします） */
 .profile-room .wall{align-items:center;justify-content:center;
-  padding-left:max(var(--edge-l),24px);padding-right:max(var(--edge-r),24px);
-  transform:translateY(calc(var(--eye) - 50%))}
+  padding-left:16px;padding-right:16px;transform:none}
+.profile-room .side{z-index:1}
+.profile-room .card{
+  max-width:min(560px, calc(100vw - 32px));
+  max-height:calc(100% - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-y:auto;overscroll-behavior:contain;
+}
 .card{
   max-width:min(560px,88vw);background:#FAF7F1;padding:clamp(26px,6vw,44px);
   box-shadow:0 18px 40px rgba(0,0,0,.5),0 3px 10px rgba(0,0,0,.3);
@@ -335,6 +342,7 @@ img{display:block}
 
 /* 参加者一覧 */
 .card.guests{width:min(640px,90vw);max-width:none;text-align:center}
+.profile-room .card.guests{max-width:none}
 .card .list-e{font-family:var(--mincho);font-size:10px;letter-spacing:.4em;text-indent:.4em;color:var(--ink-mute)}
 .card .list-t{font-family:var(--mincho);font-size:clamp(17px,4.6vw,22px);letter-spacing:.18em;text-indent:.18em;margin:6px 0 8px}
 .card .list-lead{font-size:12.5px;line-height:1.9;color:#5A6168;white-space:pre-wrap;margin-bottom:22px}
@@ -347,9 +355,7 @@ img{display:block}
   .person a{font-size:9.5px;padding:5px 8px;letter-spacing:.06em}
 }
 /* 一覧の部屋は、上下のボタンにかからない位置に */
-.profile-room .wall{transform:none}
-.card.guests{max-height:calc(100% - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  margin-top:calc(10px + env(safe-area-inset-top));overflow-y:auto;overscroll-behavior:contain}
+.card.guests{margin-top:calc(10px + env(safe-area-inset-top))}
 .person{display:flex;flex-direction:column;align-items:center;gap:7px}
 .person .icon{width:64px;height:64px;border-radius:50%;overflow:hidden;flex:0 0 auto;
   background:#EFEAE0;box-shadow:0 0 0 1px rgba(60,68,75,.12),0 4px 12px rgba(38,42,46,.16);
@@ -411,7 +417,7 @@ const CONFIG = {
    ・link はリンクを1つだけ。URLが空ならボタンは出ません
    ・参加しない人の行は、行ごと消してください */
 const GUESTS = [
-  { name:"ゲスト 01", file:"art01.png", icon:"icon01.png", link:{ label:"Instagram", url:"" } },
+  { name:"桜華", file:"art01.png", icon:"icon01.png", link:{ label:"Instagram", url:"https://www.instagram.com/usakuma.ruruu" } },
   { name:"ゲスト 02", file:"art02.png", icon:"icon02.png", link:{ label:"Instagram", url:"" } },
   { name:"ゲスト 03", file:"art03.png", icon:"icon03.png", link:{ label:"Instagram", url:"" } },
   { name:"ゲスト 04", file:"art04.png", icon:"icon04.png", link:{ label:"Instagram", url:"" } },
