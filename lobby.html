@@ -244,7 +244,7 @@ const EVENT = {
    ・url はその人のハロウィン展示のURL。空だと「準備中」になります
    ・参加しない人の行は、行ごと消してください */
 const EXHIBITS = [
-  { name:"Lina",      title:"Halloween Magical Night", poster:"poster01.png", url:"https://lina-ai-works.github.io/halloween-magicalnight/" },
+  { name:"Lina", title:"Halloween Magical Night", poster:"poster01.png", url:"https://lina-ai-works.github.io/halloween-magicalnight/" },
   { name:"Proto", title:"［P.］", poster:"poster02.png", url:"https://pro0000-sys.github.io/Protoon/" },
   { name:"Ozmo", title:"Halloween Party Night", poster:"poster03.png", url:"https://ozmoaiart-crypto.github.io/halloween/" },
   { name:"kirara", title:"♡ Happy Halloween ♡", poster:"poster04.jpg", url:"https://roseribbon-eng.github.io/kirararoom-halloweennight2026/" },
@@ -388,9 +388,23 @@ function open(){
   const x = list[current];
   if (!x || going) return;
   if (!x.url){ toast('この展示は、まもなく公開です'); return; }
+  track(x);
   going = true;
   document.body.classList.add('going');
   setTimeout(() => { location.href = x.url; }, 1000);
+}
+
+/* どの展示が開かれたかを記録します（GA4） */
+function track(x){
+  try{
+    if (typeof gtag !== 'function') return;
+    gtag('event', 'exhibit_open', {
+      exhibit_name: x.name || '',
+      exhibit_title: x.title || '',
+      exhibit_kind: x.kind === 'guest' ? 'guest_room' : 'room',
+      exhibit_url: x.url || ''
+    });
+  }catch(e){}
 }
 function toast(msg){
   const t = $('#toast');
