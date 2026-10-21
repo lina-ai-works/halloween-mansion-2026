@@ -127,10 +127,18 @@ a{color:inherit}
 /* GUEST ROOM の扉（画像が無いときの形） */
 .card.guest{border-radius:999px 999px 0 0;overflow:hidden}
 .card.guest .blank{background:
-    radial-gradient(70% 45% at 50% 62%,rgba(255,190,110,.22),transparent 70%),
-    linear-gradient(180deg,#2A2027,#110C10)}
-.card.guest .blank::before{border-radius:999px 999px 0 0}
-.card.guest .blank .e{font-family:var(--mincho);font-size:9.5px;letter-spacing:.34em;text-indent:.34em;color:var(--mute)}
+    radial-gradient(70% 45% at 50% 62%,var(--door-glow,rgba(255,190,110,.22)),transparent 70%),
+    linear-gradient(180deg,var(--door-a,#2A2027),var(--door-b,#110C10))}
+.card.guest .blank::before{border-radius:999px 999px 0 0;
+  border-color:var(--door-line,rgba(214,176,112,.3))}
+.card.guest .blank .e{font-family:var(--mincho);font-size:9.5px;letter-spacing:.34em;
+  text-indent:.34em;color:var(--door-ink,var(--mute))}
+/* 扉の上の明かり取り */
+.card.guest .blank::after{
+  content:"";position:absolute;left:50%;top:9%;translate:-50% 0;
+  width:34%;aspect-ratio:1;border-radius:999px 999px 0 0;
+  border:1px solid var(--door-line,rgba(214,176,112,.3));
+  background:radial-gradient(60% 60% at 50% 70%,var(--door-glow,rgba(255,190,110,.22)),transparent 72%)}
 
 /* 真ん中の作品の名前 */
 #caption{position:fixed;left:0;right:0;z-index:4;
@@ -260,9 +268,25 @@ const EXHIBITS = [
 const GUEST = {
   show:   true,
   name:   "GUEST ROOM",
+  sub:    "ゲストの部屋",
   title:  "それぞれのハロウィンが彩る部屋",
-  poster: "guest.jpg",   // 無ければ、扉の形のカードが出ます
-  url:    "guest/index.html"   // guest フォルダに置いた GUEST ROOM
+  poster: "guest.jpg",
+  url:    "guest/index.html",
+  /* 扉の色（画像が無いときの見た目） */
+  tone:   { a:"#2A2027", b:"#110C10", glow:"rgba(255,190,110,.22)",
+            line:"rgba(214,176,112,.34)", ink:"#C9B189" }
+};
+
+/* GUEST ROOM 2 の扉（いちばん最後に並びます） */
+const GUEST2 = {
+  show:   true,
+  name:   "GUEST ROOM 2",
+  sub:    "二つめの部屋",
+  title:  "会期の途中から開いた、ゲストの部屋",
+  poster: "guest2.jpg",
+  url:    "guest2/index.html",
+  tone:   { a:"#1E2A22", b:"#0B120E", glow:"rgba(150,225,170,.22)",
+            line:"rgba(150,200,162,.36)", ink:"#9EC4A6" }
 };
 
 /* ============================================================
@@ -299,6 +323,7 @@ if (EVENT.shuffle){
   }
 }
 if (GUEST.show) list.push(Object.assign({ kind:'guest' }, GUEST));
+if (typeof GUEST2 !== 'undefined' && GUEST2.show) list.push(Object.assign({ kind:'guest' }, GUEST2));
 
 /* カードを作る */
 const cards = list.map((x, i) => {
@@ -308,8 +333,8 @@ const cards = list.map((x, i) => {
   c.tabIndex = -1;
   const blank =
     '<div class="blank">' +
-      (x.kind === 'guest' ? '<div class="e">GUEST ROOM</div>' : '') +
-      '<div class="n">' + esc(x.kind === 'guest' ? 'ゲストの部屋' : x.name) + '</div>' +
+      (x.kind === 'guest' ? '<div class="e">' + esc(x.name) + '</div>' : '') +
+      '<div class="n">' + esc(x.kind === 'guest' ? (x.sub || 'ゲストの部屋') : x.name) + '</div>' +
       (x.kind === 'guest' ? '' : '<div class="s">' + esc(x.title || '') + '</div>') +
     '</div>';
   if (x.poster){
@@ -321,6 +346,9 @@ const cards = list.map((x, i) => {
     c.appendChild(img);
   } else {
     c.innerHTML = blank;
+  }
+  if (x.kind === 'guest' && x.tone){
+    Object.keys(x.tone).forEach(k => c.style.setProperty('--door-' + k, x.tone[k]));
   }
   c.addEventListener('click', () => {
     if (i === current) open();
