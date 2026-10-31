@@ -1,49 +1,42 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head><!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BMFDEZ5Y3V"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-BMFDEZ5Y3V');
-</script>
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HALLOWEEN EXHIBITION</title>
+<title>ハロウィンの館 2026</title>
 <link rel="preload" as="image" href="gate.jpg">
 <link rel="prefetch" href="lobby.html">
 <style>
 /* ============================================================
-   合同展の入口（門の絵 → ENTER → ロビー）
+   ハロウィンの館 ― 閉館後の入口
+   絵はそのまま。文面とボタンだけ、日付で切り替わります。
    ============================================================ */
 :root{
-  --night:#0E0B12;          /* 暗転の色（展示室の到着と同じ） */
-  --cream:#F4ECDD;          /* タイトルの色 */
-  --mute:#C9BBA6;           /* 小さい文字 */
-  --ember:rgba(255,160,70,.55);   /* かぼちゃの灯り */
+  --night:#0E0B12;
+  --cream:#F4ECDD;
+  --mute:#C9BBA6;
+  --gold:rgba(214,176,112,.5);
+  --ember:rgba(255,160,70,.55);
   --ease:cubic-bezier(.65,.05,.36,1);
   --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","HGS明朝E",Georgia,serif;
   --gothic:"Hiragino Sans","Yu Gothic","YuGothic","Helvetica Neue",Arial,sans-serif;
-  /* 絵の大きさ：スマホでは門の柱が切れない幅、横長の画面では縦がぴったり収まる大きさ */
   --scene-w:min(max(100vw, 60svh), 80svh);
-  /* 洋館の扉の位置（絵の中の割合） */
   --door-x:51.5%;
   --door-y:58%;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:var(--night)}
-body{font-family:var(--gothic);color:var(--cream);-webkit-font-smoothing:antialiased}
+html,body{min-height:100%;background:var(--night)}
+body{font-family:var(--gothic);color:var(--cream);-webkit-font-smoothing:antialiased;
+  overflow-x:hidden}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--cream);outline-offset:4px}
 
 /* ---------- 背景（同じ絵をぼかして、余白を埋める） ---------- */
 .haze{
   position:fixed;inset:-6%;z-index:0;
   background:url(gate.jpg) center/cover no-repeat;
-  filter:blur(28px) brightness(.5) saturate(1.1);
-  transition:opacity 1.2s ease;
+  filter:blur(28px) brightness(.42) saturate(1.05);
 }
 
 /* ---------- 門の絵 ---------- */
@@ -51,7 +44,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   position:fixed;left:50%;top:50%;z-index:1;
   width:var(--scene-w);aspect-ratio:1122/1402;
   translate:-50% -50%;
-  transform-origin:var(--door-x) var(--door-y);
   opacity:0;
   animation:arrive 1.8s ease .1s forwards;
   -webkit-mask-image:
@@ -63,13 +55,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%);
           mask-composite:intersect;
 }
-@keyframes arrive{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
+@keyframes arrive{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
 .scene img{display:block;width:100%;height:100%;object-fit:cover;
   -webkit-user-select:none;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none}
 
 /* かぼちゃと窓の灯りを、ほんの少しゆらす */
 .glow{position:absolute;border-radius:50%;pointer-events:none;
-  mix-blend-mode:screen;opacity:.0;
+  mix-blend-mode:screen;opacity:0;
   background:radial-gradient(closest-side,var(--ember),transparent);
   animation:flicker 3.4s ease-in-out infinite}
 @keyframes flicker{
@@ -80,68 +72,81 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   animation:breathe 6s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.25}50%{opacity:.6}}
 
-/* 扉のところも押せるようにする */
+/* 扉を押すと、記録ページへ */
 .door-hit{position:absolute;left:calc(var(--door-x) - 6%);top:calc(var(--door-y) - 7%);
   width:12%;height:13%;border-radius:40% 40% 4px 4px;cursor:pointer}
 
-/* ---------- 文字 ---------- */
+/* ---------- 画面全体を少し落とす ---------- */
 .shade{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:
-    linear-gradient(180deg,rgba(10,8,12,.72) 0%,rgba(10,8,12,.28) 22%,transparent 38%),
-    linear-gradient(0deg,rgba(10,8,12,.78) 0%,rgba(10,8,12,.3) 20%,transparent 36%);
-  transition:opacity .8s ease}
+    radial-gradient(120% 90% at 50% 50%,rgba(10,8,12,.18) 0%,rgba(10,8,12,.62) 100%),
+    linear-gradient(180deg,rgba(10,8,12,.34) 0%,transparent 26%),
+    linear-gradient(0deg,rgba(10,8,12,.6) 0%,transparent 28%);
+}
 
-.head{
-  position:fixed;left:0;right:0;z-index:3;
-  top:calc(clamp(26px,6svh,64px) + env(safe-area-inset-top));
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:0 20px;text-align:center;
-  opacity:0;animation:rise 1.4s var(--ease) .7s forwards;
-  text-shadow:0 2px 16px rgba(0,0,0,.6);
+/* ---------- お知らせの札 ---------- */
+.wrap{
+  position:relative;z-index:3;
+  min-height:100svh;
+  display:flex;align-items:center;justify-content:center;
+  padding:calc(28px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
 }
-.eyebrow{font-family:var(--mincho);font-size:clamp(10px,2.6vw,12px);
-  letter-spacing:.46em;text-indent:.46em;color:var(--mute)}
-.title{font-family:var(--mincho);font-weight:400;
-  font-size:clamp(26px,7.2vw,46px);letter-spacing:.18em;text-indent:.18em;line-height:1.45}
-.period{font-family:var(--mincho);font-size:clamp(11px,3vw,13.5px);
-  letter-spacing:.28em;text-indent:.28em;color:var(--mute)}
+.card{
+  width:min(540px,100%);
+  padding:clamp(26px,6vw,40px) clamp(20px,5vw,38px);
+  background:rgba(12,9,15,.72);
+  border:1px solid rgba(214,176,112,.28);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 18px 60px rgba(0,0,0,.5);
+  text-align:center;
+  opacity:0;animation:rise 1.3s var(--ease) .6s forwards;
+}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.foot{
-  position:fixed;left:0;right:0;z-index:3;
-  bottom:calc(clamp(28px,7svh,70px) + env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-  opacity:0;animation:rise 1.4s var(--ease) 1.3s forwards;
-}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.enter{
-  font-family:var(--mincho);font-size:14px;letter-spacing:.5em;text-indent:.5em;
-  color:var(--cream);padding:15px 38px;
-  border:1px solid rgba(244,236,221,.42);
-  background:rgba(14,11,18,.34);backdrop-filter:blur(3px);
-  transition:background .35s,border-color .35s,letter-spacing .35s;
-}
-.enter:hover{background:rgba(255,160,70,.16);border-color:var(--cream)}
-.note{font-family:var(--mincho);font-size:11px;letter-spacing:.2em;color:var(--mute);
-  text-shadow:0 1px 10px rgba(0,0,0,.7)}
+.mark{font-family:var(--mincho);font-size:clamp(10px,2.6vw,11.5px);
+  letter-spacing:.42em;text-indent:.42em;color:var(--mute);margin-bottom:14px}
+.name{font-family:var(--mincho);font-weight:400;
+  font-size:clamp(21px,5.6vw,28px);letter-spacing:.16em;text-indent:.16em;
+  line-height:1.5;margin-bottom:6px}
+.span{font-family:var(--mincho);font-size:clamp(10.5px,2.8vw,12px);
+  letter-spacing:.2em;color:var(--mute);margin-bottom:26px}
 
-/* ---------- 入っていく ---------- */
-#dark{position:fixed;inset:0;z-index:10;background:var(--night);
-  opacity:0;pointer-events:none;transition:opacity .9s ease .75s}
-body.going #dark{opacity:1}
-body.going .scene{
-  animation:none;opacity:1;
-  transform:scale(3.4);
-  transition:transform 1.7s cubic-bezier(.55,0,.8,.3);
+.msg{font-family:var(--mincho);font-size:clamp(13px,3.5vw,14.5px);
+  line-height:2.1;color:var(--cream)}
+.msg p + p{margin-top:.4em}
+
+/* 文を「、」のところで折り返す（スマホで1文字だけ落ちないように） */
+.w{display:inline-block}
+.gap{height:24px}
+
+.btns{display:flex;flex-direction:column;align-items:center;gap:11px;margin-top:26px}
+.btn{
+  display:inline-block;
+  font-family:var(--mincho);font-size:13px;letter-spacing:.36em;text-indent:.36em;
+  padding:14px 30px;min-width:min(260px,100%);
+  border:1px solid rgba(244,236,221,.4);
+  background:rgba(14,11,18,.4);
+  transition:background .3s,border-color .3s;
 }
-body.going .haze{opacity:0}
-body.going .head,body.going .foot,body.going .shade{
-  animation:none;opacity:0;transition:opacity .5s ease}
+.btn:hover{background:rgba(255,160,70,.14);border-color:var(--cream)}
+.btn.lead{border-color:rgba(214,176,112,.66);background:rgba(214,176,112,.1)}
+.btn.lead:hover{background:rgba(255,160,70,.2)}
+
+.rule{display:flex;align-items:center;gap:14px;margin:30px 0 20px;
+  font-family:var(--mincho);font-size:11px;letter-spacing:.3em;color:var(--mute)}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:var(--gold);opacity:.5}
+
+.next-title{font-family:var(--mincho);font-size:clamp(15px,4.2vw,18px);
+  letter-spacing:.1em;line-height:1.6;margin-bottom:8px}
+.next-span{font-family:var(--mincho);font-size:clamp(11px,3vw,12.5px);
+  letter-spacing:.14em;color:var(--mute);margin-bottom:18px}
+.next-body{font-family:var(--mincho);font-size:clamp(12.5px,3.3vw,13.5px);
+  line-height:2.05;color:var(--cream);opacity:.94}
+.next-body .open{margin-top:.9em;color:var(--mute)}
 
 @media (prefers-reduced-motion:reduce){
-  .scene,.head,.foot{animation:none;opacity:1}
+  .scene,.card{animation:none;opacity:1}
   .glow{animation:none;opacity:.45}
-  body.going .scene{transform:none;transition:none}
-  #dark{transition-delay:0s}
 }
 </style>
 </head>
@@ -149,9 +154,9 @@ body.going .head,body.going .foot,body.going .shade{
 
 <div class="haze" aria-hidden="true"></div>
 
-<div class="scene" id="scene">
-  <img src="gate.jpg" alt="門の奥に、灯りのともった洋館が見える" draggable="false">
-  <!-- かぼちゃの灯り（左から） -->
+<div class="scene" id="scene" aria-hidden="true">
+  <img src="gate.jpg" alt="" draggable="false">
+  <!-- かぼちゃの灯り -->
   <span class="glow" style="left:-1%;top:70%;width:20%;height:16%;animation-delay:-.4s"></span>
   <span class="glow" style="left:20%;top:66.3%;width:10%;height:8%;animation-delay:-1.9s"></span>
   <span class="glow" style="left:31.5%;top:63.5%;width:10%;height:8%;animation-delay:-2.6s"></span>
@@ -169,66 +174,131 @@ body.going .head,body.going .foot,body.going .shade{
   <span class="glow window" style="left:45.5%;top:40%;width:12%;height:12%;animation-delay:-2s"></span>
   <span class="glow window" style="left:35.4%;top:51%;width:12%;height:12%;animation-delay:-3.2s"></span>
   <span class="glow window" style="left:56.4%;top:51%;width:12%;height:12%;animation-delay:-1.2s"></span>
-  <button class="door-hit" id="door" aria-label="洋館に入る"></button>
+  <a class="door-hit" href="lobby.html" aria-label="会期の記録を見る"></a>
 </div>
 
 <div class="shade" aria-hidden="true"></div>
 
-<header class="head">
-  <div class="eyebrow" id="eyebrow"></div>
-  <h1 class="title" id="title"></h1>
-  <div class="period" id="period"></div>
-</header>
-
-<div class="foot">
-  <button class="enter" id="enter">ENTER</button>
-  <div class="note" id="note"></div>
+<div class="wrap">
+  <main class="card" id="card"></main>
 </div>
-
-<div id="dark"></div>
 
 <script>
 /* ============================================================
    ★ ここだけ書き換えてください ★
    ============================================================ */
-const EVENT = {
-  eyebrow: "みんなでつくる",
-  title:   "ハロウィンの館",
-  period:  "2026.10.12 — 10.31",     // 会期
-  note:    "門をくぐって、洋館の中へ",   // ENTERの下の小さな文字（空でもOK）
-  lobby:   "lobby.html"                 // ロビーのファイル名（同じ場所に置きます）
-};
+
+/* ART QUEST のURL。決まったら入れてください。
+   空のままだと「街へ行く」のボタンは出ません。 */
+const ARTQUEST_URL = "";
+
+/* 文面が切り替わる日（この日の朝から、下の【11月14日から】になります） */
+const SWITCH_DATE = "2026-11-14";
+
+/* 会期の記録ページ */
+const RECORD_URL = "lobby.html";
 
 /* ============================================================
    ここから下は触らなくて大丈夫です
    ============================================================ */
-const $ = s => document.querySelector(s);
-$('#eyebrow').textContent = EVENT.eyebrow;
-$('#title').textContent   = EVENT.title;
-$('#period').textContent  = EVENT.period;
-$('#note').textContent    = EVENT.note;
-if (!EVENT.period) $('#period').remove();
-if (!EVENT.note) $('#note').remove();
-document.title = EVENT.title;
 
-let going = false;
-function enter(){
-  if (going) return;
-  going = true;
-  document.body.classList.add('going');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(() => { location.href = EVENT.lobby; }, reduce ? 700 : 1700);
+/* 切り替わる前（〜11月13日） */
+const BEFORE = {
+  message: [
+    "ハロウィンの館は、10月31日で会期を終えました。",
+    "たくさんのご来館、ありがとうございました。"
+  ],
+  next: {
+    title: "ART QUEST　～秘密の鍵を探して～",
+    span:  "2026年11月14日（土）から",
+    body: [
+      "秋の不思議な街に、作家たちがお部屋をかまえます。",
+      "それぞれのお部屋のどこかに、鍵がひとつ。",
+      "すべて集めると、広場の宝箱が開きます。"
+    ],
+    open: "11月14日、開門します。"
+  },
+  town: false
+};
+
+/* 切り替わったあと（11月14日〜） */
+const AFTER = {
+  message: [
+    "ハロウィンの館は閉館しました。",
+    "ご来館ありがとうございました。"
+  ],
+  next: {
+    title: "ART QUEST　～秘密の鍵を探して～",
+    span:  "開催中",
+    body: [
+      "いま、秋の街で鍵さがしをしています。"
+    ],
+    open: ""
+  },
+  nextFirst: true,   /* お知らせをボタンより先に出す */
+  town: true
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* 今日が切り替えの日を過ぎているか（端末の日付で見ます）
+   ?after を付けて開くと、11月14日からの画面を先に確認できます */
+function isAfter(){
+  const q = location.search;
+  if (/[?&]after/.test(q)) return true;
+  if (/[?&]before/.test(q)) return false;
+  const n = new Date();
+  const today = n.getFullYear() + '-' +
+                String(n.getMonth() + 1).padStart(2, '0') + '-' +
+                String(n.getDate()).padStart(2, '0');
+  return today >= SWITCH_DATE;
 }
-$('#enter').addEventListener('click', enter);
-$('#door').addEventListener('click', enter);
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement === document.body) enter();
-});
 
-/* ロビーから「戻る」で帰ってきたとき、暗いままにならないようにする */
-window.addEventListener('pageshow', e => {
-  if (e.persisted){ going = false; document.body.classList.remove('going'); }
-});
+/* 「、」のところで切って、1文字だけ次の行に落ちないようにします */
+function line(t){
+  const parts = String(t).split('、');
+  return parts.map(function(s, i){
+    return '<span class="w">' + esc(s + (i < parts.length - 1 ? '、' : '')) + '</span>';
+  }).join('');
+}
+const para = arr => (arr || []).map(t => '<p>' + line(t) + '</p>').join('');
+
+function nextBlock(n, divider){
+  const h = [];
+  if (divider) h.push('<div class="rule">次のイベント</div>');
+  else h.push('<div class="gap"></div>');
+  h.push('<div class="next-title">' + esc(n.title) + '</div>');
+  h.push('<div class="next-span">' + esc(n.span) + '</div>');
+  h.push('<div class="next-body">' + para(n.body) +
+    (n.open ? '<p class="open">' + line(n.open) + '</p>' : '') + '</div>');
+  return h.join('');
+}
+
+function render(){
+  const v = isAfter() ? AFTER : BEFORE;
+  const town = v.town && ARTQUEST_URL;
+  const h = [];
+
+  h.push('<div class="mark">HALLOWEEN MANSION 2026</div>');
+  h.push('<h1 class="name">ハロウィンの館</h1>');
+  h.push('<div class="span">2026.10.12 — 10.31</div>');
+
+  h.push('<div class="msg">' + para(v.message) + '</div>');
+
+  if (v.next && v.nextFirst) h.push(nextBlock(v.next, false));
+
+  h.push('<div class="btns">');
+  if (town){
+    h.push('<a class="btn lead" href="' + esc(ARTQUEST_URL) + '">街へ行く</a>');
+  }
+  h.push('<a class="btn' + (town ? '' : ' lead') + '" href="' + esc(RECORD_URL) + '">会期の記録を見る</a>');
+  h.push('</div>');
+
+  if (v.next && !v.nextFirst) h.push(nextBlock(v.next, true));
+
+  document.getElementById('card').innerHTML = h.join('');
+}
+render();
 
 /* 長押し・右クリックでの保存を抑止 */
 document.addEventListener('contextmenu', e => {
